@@ -16,3 +16,14 @@ com `fetch`; aberta direto do disco, ela mostra a mensagem de erro.
 
 Para editar as regras, altere o array `REGRAS` em `index.html`. Para editar os leads, altere
 `data/leads.json`. Convenções em `CLAUDE.md`.
+
+## Supabase
+
+A pasta `supabase/` tem experimentos de banco e edge function num projeto Supabase pessoal:
+
+- `migrations/` — tabela `notas` com RLS (cada usuário só vê e cria as próprias notas) e o
+  grant separado, mais um ajuste de segurança.
+- `functions/ola-nexi/` — função de exemplo: 200 com nome, 400 sem nome, 401 sem token válido.
+  Lê `SUPABASE_URL` e `SUPABASE_ANON_KEY` do ambiente. Como rodar local: ver `CLAUDE.md`.
+
+Nenhuma chave, URL ou id de projeto fica no repositório.

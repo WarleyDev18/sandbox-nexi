@@ -1,0 +1,14 @@
+[
+  { "id": 1,  "empresa": "Padaria Sol Nascente",       "cnpj": "00.000.001/0001-00", "cidade": "Vila Aurora",             "uf": "BA", "segmento": "Alimentação", "valor_estimado": 4800,  "status": "Quente" },
+  { "id": 2,  "empresa": "Metalúrgica Vale Verde",     "cnpj": "00.000.002/0001-00", "cidade": "Porto Claro",             "uf": "BA", "segmento": "Indústria",   "valor_estimado": 18500, "status": "Qualificado" },
+  { "id": 3,  "empresa": "Mercadinho Bom Dia",         "cnpj": "00.000.003/0001-00", "cidade": "Lagoa Serena",            "uf": "PE", "segmento": "Varejo",      "valor_estimado": 7200,  "status": "Morno" },
+  { "id": 4,  "empresa": "Clínica Horizonte Azul",     "cnpj": "00.000.004/0001-00", "cidade": "Campo Alegre do Sul",     "uf": "CE", "segmento": "Saúde",       "valor_estimado": 3100,  "status": "Frio" },
+  { "id": 5,  "empresa": "Gráfica Ponto Final",        "cnpj": "00.000.005/0001-00", "cidade": "Serra Azul",              "uf": "PR", "segmento": "Serviços",    "valor_estimado": 2600,  "status": "Quente" },
+  { "id": 6,  "empresa": "Laticínios Serra Alta",      "cnpj": "00.000.006/0001-00", "cidade": "Monte Verde Novo",        "uf": "PR", "segmento": "Indústria",   "valor_estimado": 15400, "status": "Morno" },
+  { "id": 7,  "empresa": "Hotel Brisa do Mar",         "cnpj": "00.000.007/0001-00", "cidade": "Praia Dourada",           "uf": "BA", "segmento": "Serviços",    "valor_estimado": 9900,  "status": "Frio" },
+  { "id": 8,  "empresa": "Frigorífico Campo Bom",      "cnpj": "00.000.008/0001-00", "cidade": "Rio Manso",               "uf": "AM", "segmento": "Indústria",   "valor_estimado": 21000, "status": "Qualificado" },
+  { "id": 9,  "empresa": "Escola Pequeno Saber",       "cnpj": "00.000.009/0001-00", "cidade": "São Bento do Vale",       "uf": "MA", "segmento": "Educação",    "valor_estimado": 1900,  "status": "Frio" },
+  { "id": 10, "empresa": "Têxtil Fio de Ouro",         "cnpj": "00.000.010/0001-00", "cidade": "Nova Esperança do Leste", "uf": "SC", "segmento": "Indústria",   "valor_estimado": 12300, "status": "Quente" },
+  { "id": 11, "empresa": "Restaurante Sabor da Terra", "cnpj": "00.000.011/0001-00", "cidade": "Vale do Sossego",         "uf": "BA", "segmento": "Alimentação", "valor_estimado": 3800,  "status": "Morno" },
+  { "id": 12, "empresa": "Plásticos Nova Era",         "cnpj": "00.000.012/0001-00", "cidade": "Pedra Branca do Norte",   "uf": "RS", "segmento": "Indústria",   "valor_estimado": 8700,  "status": "Morno" }
+]

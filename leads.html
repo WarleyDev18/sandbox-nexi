@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Leads · Sandbox</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" />
+  <link rel="stylesheet" href="css/leads.css" />
+</head>
+<body>
+  <header class="topbar">
+    <span class="topbar__logo">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></svg>
+    </span>
+    <span class="topbar__title">Leads</span>
+    <div class="topbar__sep"></div>
+    <div class="topbar__breadcrumb">Lista de leads fictícios · dados de exemplo</div>
+  </header>
+
+  <main class="content">
+    <div class="toolbar">
+      <label class="busca">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <input id="busca" type="search" placeholder="Buscar empresa, CNPJ, cidade ou segmento…" aria-label="Buscar leads" autocomplete="off" />
+      </label>
+      <select id="filtroUf" class="select" aria-label="Filtrar por UF">
+        <option value="">Todas as UFs</option>
+      </select>
+    </div>
+
+    <div class="chips" id="filtroStatus" role="group" aria-label="Filtrar por status">
+      <button type="button" class="chip chip--ativo" data-status="todos">Todos <span class="chip__n"></span></button>
+      <button type="button" class="chip" data-status="Qualificado">Qualificado <span class="chip__n"></span></button>
+      <button type="button" class="chip" data-status="Quente">Quente <span class="chip__n"></span></button>
+      <button type="button" class="chip" data-status="Morno">Morno <span class="chip__n"></span></button>
+      <button type="button" class="chip" data-status="Frio">Frio <span class="chip__n"></span></button>
+    </div>
+
+    <section>
+      <div class="section__head">
+        <h2>Leads</h2>
+        <span class="section__line"></span>
+        <span class="section__count" id="contador"></span>
+      </div>
+
+      <div id="carregando" class="estado">Carregando leads…</div>
+
+      <div id="erro" class="erro" role="alert" hidden>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+        <div class="erro__texto">
+          <strong>Não foi possível carregar os leads</strong>
+          <p id="erroMsg"></p>
+          <p id="erroDica" class="erro__dica" hidden></p>
+        </div>
+        <button type="button" class="btn" id="btnTentar">Tentar novamente</button>
+      </div>
+
+      <div id="conteudo" hidden>
+        <div class="lista" id="lista"></div>
+        <div class="vazio" id="vazio" hidden>
+          <p>Nenhum lead encontrado com a busca e os filtros atuais.</p>
+          <button type="button" class="btn" id="btnLimpar">Limpar filtros</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="js/leads.js"></script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+# CLAUDE.md — sandbox-nexi
+
+Repositório **público** de experimentos de tela em HTML, CSS e JavaScript puros.
+Nada aqui fala com banco, API ou login: são telas estáticas com **dados fictícios**.
+
+## Regra nº 1 — só conteúdo fictício
+
+Nenhum dado, regra, marca, identidade visual, nome de sistema, documento ou referência de
+empresa real entra aqui. Antes de gravar ou subir qualquer arquivo, conferir isso. Na dúvida, inventar.
+
+## Telas
+
+| Arquivo | O que é | Dados |
+|---|---|---|
+| `index.html` | 5 regras de negócio de uma loja fictícia, em cards | array `REGRAS` (arquivo único, CSS/JS embutidos) |
+| `leads.html` | Lista de leads com busca e filtros | `data/leads.json`, via `fetch` |
+
+Arquivos separados da tela de leads: `leads.html` → `css/leads.css` → `js/leads.js` → `data/leads.json`.
+
+## Como rodar
+
+`leads.html` lê o JSON com `fetch`, que não funciona abrindo o arquivo do disco (`file://`):
+a tela mostra o erro, com dica. Use um servidor local na raiz:
+
+    npx http-server -p 8080 -c-1 .
+
+e abra `http://localhost:8080/leads.html`. `index.html` funciona com duplo clique.
+Para ver o estado de erro: `leads.html?fonte=data/nao-existe.json` (só aceita `data/<nome>.json`).
+
+## Convenções
+
+- Sem framework, sem build, sem dependência além do Google Fonts (Inter + JetBrains Mono).
+- JS em IIFE `(function () { "use strict"; ... }())`, com `var`.
+- Todo texto vindo de dado passa por `esc()` antes do `innerHTML` (XSS).
+- Cores e espaçamentos só por token `var(--...)`; hex só no `:root`. Os tokens estão
+  duplicados em `index.html` e `css/leads.css` — mudou um, mude o outro.
+- Ícones: SVG Lucide (MIT) inline. Layout funciona em celular (≤640px).
+
+## Contrato de `data/leads.json`
+
+Lista de objetos: `id` (número), `empresa`, `cnpj` (formatado, fictício), `cidade` (inventada),
+`uf`, `segmento`, `valor_estimado` (número, em reais), `status` (`Qualificado` | `Quente` | `Morno` | `Frio`).
+
+## Aprendizados (não repetir)
+
+1. **Erro de carga ≠ lista vazia.** Falha ao ler o JSON mostra a causa e "Tentar novamente";
+   "Nenhum lead encontrado" é só para filtro sem resultado.
+2. **`file://` bloqueia `fetch`** — testar por servidor local.
+3. **Conteúdo real já vazou aqui uma vez** e o repositório teve de ser apagado e recriado.
+   Por isso a Regra nº 1.
+4. **Git no Windows:** caminhos muito longos (pasta temporária) dão `Filename too long`.
+   O clone local fica em `C:\Users\Warley Ruivo\sandbox-nexi`.
+5. **Comandos git destrutivos:** usar `set -e`, conferir o commit (`git show --stat`) antes do push.
+6. **Fluxo:** mostrar o código → validar no navegador → só então commit + push.

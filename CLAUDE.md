@@ -55,7 +55,7 @@ projeto registrou (`list_migrations`). Migration aplicada é salva aqui na mesma
 |---|---|
 | `migrations/20261008192521_notas.sql` | Tabela `notas`, RLS, policies de select/insert (`user_id = auth.uid()`), `revoke` de anon/authenticated |
 | `migrations/20261008192545_notas_grant.sql` | `grant select, insert` para `authenticated` |
-| `migrations/20261008200000_rls_auto_enable_sem_api.sql` | Tira `rls_auto_enable()` da API (alerta do Security Advisor) |
+| `migrations/20261008192946_rls_auto_enable_sem_api.sql` | Tira `rls_auto_enable()` da API (alerta do Security Advisor) |
 | `functions/ola-nexi/index.ts` | Edge function de exemplo: 200 / 400 sem nome / 401 sem token ou token inválido |
 
 **Nunca** escrever no repo: id do projeto, URL, chave publishable/anon, service_role, senha.

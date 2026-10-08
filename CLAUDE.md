@@ -33,17 +33,17 @@ Para ver o estado de erro: `leads.html?fonte=data/nao-existe.json` (só aceita `
 - JS em IIFE `(function () { "use strict"; ... }())`, com `var`.
 - Texto vindo de dado entra por `textContent` (`createElement` + `textContent`, `new Option`),
   nunca por `innerHTML`. Texto fixo com marcação fica no HTML, escondido com `hidden`.
-  (`index.html` ainda usa `esc()` + `innerHTML` — pendente de passar pela skill.)
+  Ícones ficam num sprite SVG (`<symbol id="i-nome">`) no HTML; o JS cria `<svg><use href="#i-nome">`.
 - Cor só por token `var(--...)`; cor literal só dentro do `:root`. Os tokens estão
   duplicados em `index.html` e `css/leads.css` — mudou um, mude o outro.
-- Ícones: SVG Lucide (MIT) inline. Layout funciona em celular (≤640px).
+- Ícones: SVG Lucide (MIT). Layout funciona em celular (≤640px).
 - Todo `fetch` tem tempo limite (`AbortController`), teste de `res.ok` e erro **na tela**.
 
 ## Skill `revisar-tela`
 
 `.claude/skills/revisar-tela/SKILL.md` revisa uma tela contra 4 regras: texto com
 `textContent`, cor só por variável, funciona no celular, erro de rede na tela. Rodar antes
-de subir qualquer tela nova ou alterada. `leads.html` passou nas 4 em 08/10/2026.
+de subir qualquer tela nova ou alterada. `leads.html` e `index.html` passaram nas 4 em 08/10/2026.
 
 ## Contrato de `data/leads.json`
 

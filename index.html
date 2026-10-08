@@ -39,6 +39,7 @@
       --gradient-divider: linear-gradient(90deg, var(--border-default), transparent);
       --dot-grid: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.022) 1px, transparent 0);
       --transition-base: 180ms ease;
+      --topbar-bg: rgba(23, 26, 33, 0.72);
     }
 
     * { box-sizing: border-box; }
@@ -61,7 +62,7 @@
     .topbar {
       display: flex; align-items: center; gap: var(--space-3);
       padding: var(--space-4) var(--space-6);
-      background: rgba(23, 26, 33, 0.72);
+      background: var(--topbar-bg);
       backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--border-subtle);
       position: sticky; top: 0; z-index: 10;
@@ -160,6 +161,15 @@
   </style>
 </head>
 <body>
+  <!-- Ícones Lucide (MIT) — só os usados nesta tela; o JS referencia com <use href="#i-nome"> -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="i-send" viewBox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></symbol>
+    <symbol id="i-shield-check" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></symbol>
+    <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></symbol>
+    <symbol id="i-phone" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></symbol>
+    <symbol id="i-clipboard-list" viewBox="0 0 24 24"><rect width="8" height="4" x="8" y="2" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4M12 16h4M8 11h.01M8 16h.01"/></symbol>
+  </svg>
+
   <header class="topbar">
     <span class="topbar__logo">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></svg>
@@ -188,20 +198,28 @@
   <script>
   (function () {
     "use strict";
-    var esc = function (s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); };
+    var SVG_NS = "http://www.w3.org/2000/svg";
 
-    /* Ícones Lucide (MIT) — só os usados nesta tela */
-    var ICONES = {
-      "send": '<path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/>',
-      "shield-check": '<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/>',
-      "target": '<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>',
-      "phone": '<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>',
-      "clipboard-list": '<rect width="8" height="4" x="8" y="2" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4M12 16h4M8 11h.01M8 16h.01"/>'
-    };
-    var ico = function (n, s) {
-      s = s || 18;
-      return '<svg width="' + s + '" height="' + s + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + (ICONES[n] || "") + '</svg>';
-    };
+    // cria um elemento com classe e texto — texto sempre por textContent, nunca innerHTML
+    function criar(tag, classe, texto) {
+      var n = document.createElement(tag);
+      if (classe) n.className = classe;
+      if (texto != null) n.textContent = String(texto);
+      return n;
+    }
+
+    // ícone do sprite SVG do topo da página
+    function ico(nome, tam) {
+      tam = tam || 18;
+      var svg = document.createElementNS(SVG_NS, "svg");
+      ["width", "height"].forEach(function (a) { svg.setAttribute(a, tam); });
+      [["fill", "none"], ["stroke", "currentColor"], ["stroke-width", "2"], ["stroke-linecap", "round"],
+       ["stroke-linejoin", "round"], ["aria-hidden", "true"]].forEach(function (a) { svg.setAttribute(a[0], a[1]); });
+      var use = document.createElementNS(SVG_NS, "use");
+      use.setAttribute("href", "#i-" + nome);
+      svg.appendChild(use);
+      return svg;
+    }
 
     /* ===== As 5 regras — editar aqui ===== */
     var REGRAS = [
@@ -223,28 +241,32 @@
     ];
 
     function cardRegra(r, i) {
-      var num = ("0" + (i + 1)).slice(-2);
-      return '<article class="card c-' + esc(r.cor) + ' anim-in" style="animation-delay:' + (80 + i * 60) + 'ms">' +
-        '<div class="card__header">' +
-          '<span class="card__num">' + num + '</span>' +
-          '<span class="card__icon">' + ico(r.icone) + '</span>' +
-          '<span class="card__title">' + esc(r.titulo) + '</span>' +
-        '</div>' +
-        '<div class="card__body">' +
-          '<p class="card__desc">' + esc(r.desc) + '</p>' +
-          '<div class="card__why"><strong>Por quê:</strong> ' + esc(r.porque) + '</div>' +
-          '<div class="card__foot"><span class="badge">' + esc(r.tag) + '</span></div>' +
-        '</div>' +
-      '</article>';
+      var card = criar("article", "card c-" + r.cor + " anim-in");
+      card.style.animationDelay = (80 + i * 60) + "ms";
+
+      var icone = criar("span", "card__icon");
+      icone.appendChild(ico(r.icone));
+      var cab = criar("div", "card__header");
+      cab.append(criar("span", "card__num", ("0" + (i + 1)).slice(-2)), icone, criar("span", "card__title", r.titulo));
+
+      var porque = criar("div", "card__why");
+      porque.append(criar("strong", null, "Por quê:"), " " + r.porque);
+      var rodape = criar("div", "card__foot");
+      rodape.appendChild(criar("span", "badge", r.tag));
+      var corpo = criar("div", "card__body");
+      corpo.append(criar("p", "card__desc", r.desc), porque, rodape);
+
+      card.append(cab, corpo);
+      return card;
     }
 
     function renderizar() {
       var el = document.getElementById("listaRegras");
       if (!REGRAS.length) {
-        el.innerHTML = '<div class="empty">Nenhuma regra cadastrada.</div>';
+        el.replaceChildren(criar("div", "empty", "Nenhuma regra cadastrada."));
         return;
       }
-      el.innerHTML = REGRAS.map(cardRegra).join("");
+      el.replaceChildren.apply(el, REGRAS.map(cardRegra));
       document.getElementById("cTotal").textContent = REGRAS.length + " regras";
     }
 

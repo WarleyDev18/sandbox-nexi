@@ -2,12 +2,19 @@
   "use strict";
 
   var FONTE_PADRAO = "data/leads.json";
+  var TEMPO_LIMITE_MS = 10000;
   var COR_STATUS = { Qualificado: "c-accent", Quente: "c-warning", Morno: "c-violet", Frio: "c-info" };
 
   var estado = { leads: [], busca: "", status: "todos", uf: "" };
   var el = {};
 
-  var esc = function (s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); };
+  // cria um elemento com classe e texto — texto sempre por textContent, nunca innerHTML
+  function criar(tag, classe, texto) {
+    var n = document.createElement(tag);
+    if (classe) n.className = classe;
+    if (texto != null) n.textContent = String(texto);
+    return n;
+  }
 
   // sem acento e em minúsculas, pra "sao" achar "São"
   function normalizar(s) { return String(s == null ? "" : s).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase(); }
@@ -28,8 +35,12 @@
   function carregar() {
     mostrar("carregando");
     el.contador.textContent = "";
-    fetch(fonteDaUrl(), { cache: "no-store" })
+    // sem tempo limite, um servidor que não responde deixaria a tela em "Carregando…" para sempre
+    var ctrl = new AbortController();
+    var timer = setTimeout(function () { ctrl.abort(); }, TEMPO_LIMITE_MS);
+    fetch(fonteDaUrl(), { cache: "no-store", signal: ctrl.signal })
       .then(function (res) {
+        clearTimeout(timer);
         if (!res.ok) throw new Error("O arquivo de dados respondeu HTTP " + res.status + " (" + (res.statusText || "erro") + ").");
         return res.json().catch(function () {
           throw new Error("O arquivo de dados não é um JSON válido.");
@@ -43,19 +54,23 @@
         mostrar("lista");
         renderizar();
       })
-      .catch(mostrarErro);
+      .catch(function (e) {
+        clearTimeout(timer);
+        mostrarErro(e);
+      });
   }
 
   function mostrarErro(e) {
-    var rede = e instanceof TypeError; // fetch rejeita com TypeError quando nem chega a ter resposta
-    el.erroMsg.textContent = rede ? "Falha de rede ao buscar o arquivo de dados." : e.message;
-    if (location.protocol === "file:") {
-      el.erroDica.innerHTML = "A página foi aberta direto do disco (<code>file://</code>) e o navegador bloqueia a leitura do JSON. " +
-        "Rode um servidor local na pasta do projeto: <code>npx http-server -p 8080 -c-1 .</code>";
-      el.erroDica.hidden = false;
+    var msg;
+    if (e && e.name === "AbortError") {
+      msg = "O servidor não respondeu em " + (TEMPO_LIMITE_MS / 1000) + " segundos.";
+    } else if (e instanceof TypeError) { // fetch rejeita com TypeError quando nem chega a ter resposta
+      msg = navigator.onLine === false ? "Sem conexão com a internet." : "Falha de rede ao buscar o arquivo de dados.";
     } else {
-      el.erroDica.hidden = true;
+      msg = e.message;
     }
+    el.erroMsg.textContent = msg;
+    el.erroDica.hidden = location.protocol !== "file:"; // a dica (texto fixo) mora no HTML
     mostrar("erro");
     console.error("[leads] falha ao carregar", e);
   }
@@ -63,10 +78,10 @@
   function montarFiltroUf() {
     var ufs = {};
     estado.leads.forEach(function (l) { if (l.uf) ufs[l.uf] = true; });
-    el.filtroUf.innerHTML = '<option value="">Todas as UFs</option>' +
-      Object.keys(ufs).sort().map(function (uf) {
-        return '<option value="' + esc(uf) + '">' + esc(uf) + '</option>';
-      }).join("");
+    var opcoes = [new Option("Todas as UFs", "")].concat(Object.keys(ufs).sort().map(function (uf) {
+      return new Option(uf, uf);
+    }));
+    el.filtroUf.replaceChildren.apply(el.filtroUf, opcoes);
     el.filtroUf.value = estado.uf;
   }
 
@@ -98,22 +113,27 @@
     var valor = typeof l.valor_estimado === "number"
       ? l.valor_estimado.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 })
       : "—";
-    return '<div class="lead">' +
-      '<div class="lead__avatar">' + esc(iniciais(l.empresa)) + '</div>' +
-      '<div>' +
-        '<div class="lead__nome">' + esc(l.empresa) + '</div>' +
-        '<div class="lead__sub"><span class="lead__cnpj">' + esc(l.cnpj) + '</span> · ' + esc(l.cidade) + '/' + esc(l.uf) + '</div>' +
-      '</div>' +
-      '<div class="lead__seg">' + esc(l.segmento) + '</div>' +
-      '<div class="lead__valor">' + esc(valor) + '</div>' +
-      '<span class="badge ' + (COR_STATUS[l.status] || "c-info") + '">' + esc(l.status) + '</span>' +
-    '</div>';
+    var linha = criar("div", "lead");
+
+    var info = criar("div");
+    var sub = criar("div", "lead__sub");
+    sub.append(criar("span", "lead__cnpj", l.cnpj), " · " + l.cidade + "/" + l.uf);
+    info.append(criar("div", "lead__nome", l.empresa), sub);
+
+    linha.append(
+      criar("div", "lead__avatar", iniciais(l.empresa)),
+      info,
+      criar("div", "lead__seg", l.segmento),
+      criar("div", "lead__valor", valor),
+      criar("span", "badge " + (COR_STATUS[l.status] || "c-info"), l.status)
+    );
+    return linha;
   }
 
   function renderizar() {
     var lista = filtrar();
     el.contador.textContent = lista.length + " de " + estado.leads.length + " leads";
-    el.lista.innerHTML = lista.map(linhaLead).join("");
+    el.lista.replaceChildren.apply(el.lista, lista.map(linhaLead));
     el.lista.hidden = lista.length === 0;
     el.vazio.hidden = lista.length !== 0;
   }

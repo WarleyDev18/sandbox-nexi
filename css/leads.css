@@ -28,6 +28,7 @@
   --gradient-divider: linear-gradient(90deg, var(--border-default), transparent);
   --dot-grid: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.022) 1px, transparent 0);
   --transition-base: 180ms ease;
+  --topbar-bg: rgba(23, 26, 33, 0.72);
 }
 
 * { box-sizing: border-box; }
@@ -53,7 +54,7 @@ button, input, select { font: inherit; color: inherit; }
 .topbar {
   display: flex; align-items: center; gap: var(--space-3);
   padding: var(--space-4) var(--space-6);
-  background: rgba(23, 26, 33, 0.72);
+  background: var(--topbar-bg);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border-subtle);
   position: sticky; top: 0; z-index: 10;

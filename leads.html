@@ -52,7 +52,7 @@
         <div class="erro__texto">
           <strong>Não foi possível carregar os leads</strong>
           <p id="erroMsg"></p>
-          <p id="erroDica" class="erro__dica" hidden></p>
+          <p id="erroDica" class="erro__dica" hidden>A página foi aberta direto do disco (<code>file://</code>) e o navegador bloqueia a leitura do JSON. Rode um servidor local na pasta do projeto: <code>npx http-server -p 8080 -c-1 .</code></p>
         </div>
         <button type="button" class="btn" id="btnTentar">Tentar novamente</button>
       </div>

@@ -31,10 +31,19 @@ Para ver o estado de erro: `leads.html?fonte=data/nao-existe.json` (só aceita `
 
 - Sem framework, sem build, sem dependência além do Google Fonts (Inter + JetBrains Mono).
 - JS em IIFE `(function () { "use strict"; ... }())`, com `var`.
-- Todo texto vindo de dado passa por `esc()` antes do `innerHTML` (XSS).
-- Cores e espaçamentos só por token `var(--...)`; hex só no `:root`. Os tokens estão
+- Texto vindo de dado entra por `textContent` (`createElement` + `textContent`, `new Option`),
+  nunca por `innerHTML`. Texto fixo com marcação fica no HTML, escondido com `hidden`.
+  (`index.html` ainda usa `esc()` + `innerHTML` — pendente de passar pela skill.)
+- Cor só por token `var(--...)`; cor literal só dentro do `:root`. Os tokens estão
   duplicados em `index.html` e `css/leads.css` — mudou um, mude o outro.
 - Ícones: SVG Lucide (MIT) inline. Layout funciona em celular (≤640px).
+- Todo `fetch` tem tempo limite (`AbortController`), teste de `res.ok` e erro **na tela**.
+
+## Skill `revisar-tela`
+
+`.claude/skills/revisar-tela/SKILL.md` revisa uma tela contra 4 regras: texto com
+`textContent`, cor só por variável, funciona no celular, erro de rede na tela. Rodar antes
+de subir qualquer tela nova ou alterada. `leads.html` passou nas 4 em 08/10/2026.
 
 ## Contrato de `data/leads.json`
 
@@ -46,9 +55,13 @@ Lista de objetos: `id` (número), `empresa`, `cnpj` (formatado, fictício), `cid
 1. **Erro de carga ≠ lista vazia.** Falha ao ler o JSON mostra a causa e "Tentar novamente";
    "Nenhum lead encontrado" é só para filtro sem resultado.
 2. **`file://` bloqueia `fetch`** — testar por servidor local.
-3. **Conteúdo real já vazou aqui uma vez** e o repositório teve de ser apagado e recriado.
-   Por isso a Regra nº 1.
+3. **Conteúdo real já vazou aqui uma vez** e o histórico do repositório teve de ser
+   reescrito. Por isso a Regra nº 1.
 4. **Git no Windows:** caminhos muito longos (pasta temporária) dão `Filename too long`.
    O clone local fica em `C:\Users\Warley Ruivo\sandbox-nexi`.
 5. **Comandos git destrutivos:** usar `set -e`, conferir o commit (`git show --stat`) antes do push.
 6. **Fluxo:** mostrar o código → validar no navegador → só então commit + push.
+7. **Navegador headless no Windows engana em dois testes:** a janela não fica mais estreita
+   que ~500px (screenshot de "celular" sai cortado sem a tela estar quebrada) e os timers
+   não andam enquanto há requisição pendente (teste de tempo limite parece falhar). Os
+   jeitos certos de testar estão na skill `revisar-tela`.

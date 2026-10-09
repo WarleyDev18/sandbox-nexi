@@ -4,6 +4,7 @@
   var FONTE_PADRAO = "data/leads.json";
   var TEMPO_LIMITE_MS = 10000;
   var COR_STATUS = { Qualificado: "c-accent", Quente: "c-warning", Morno: "c-violet", Frio: "c-info" };
+  var STATUS_VALIDOS = ["todos", "Qualificado", "Quente", "Morno", "Frio"];
 
   var estado = { leads: [], busca: "", status: "todos", uf: "" };
   var el = {};
@@ -24,6 +25,30 @@
   function fonteDaUrl() {
     var f = new URLSearchParams(location.search).get("fonte");
     return f && /^data\/[\w-]+\.json$/.test(f) ? f : FONTE_PADRAO;
+  }
+
+  // Filtros na URL (?q=&status=&uf=): o link filtrado pode ser compartilhado e sobrevive ao recarregar.
+  // Valor desconhecido na URL é ignorado, nunca quebra a tela.
+  function lerFiltrosDaUrl() {
+    var p = new URLSearchParams(location.search);
+    estado.busca = (p.get("q") || "").slice(0, 100);
+    var status = p.get("status");
+    estado.status = STATUS_VALIDOS.indexOf(status) !== -1 ? status : "todos";
+    var uf = (p.get("uf") || "").toUpperCase();
+    estado.uf = /^[A-Z]{2}$/.test(uf) ? uf : ""; // se a UF não existir nos dados, montarFiltroUf zera
+  }
+
+  // replaceState, não pushState: digitar na busca não enche o histórico do "voltar".
+  // Preserva os outros parâmetros (ex.: ?fonte=).
+  function gravarFiltrosNaUrl() {
+    var p = new URLSearchParams(location.search);
+    var q = estado.busca.trim();
+    if (q) p.set("q", q); else p.delete("q");
+    if (estado.status !== "todos") p.set("status", estado.status); else p.delete("status");
+    if (estado.uf) p.set("uf", estado.uf); else p.delete("uf");
+    var busca = p.toString();
+    var nova = location.pathname + (busca ? "?" + busca : "") + location.hash;
+    if (nova !== location.pathname + location.search + location.hash) history.replaceState(null, "", nova);
   }
 
   function mostrar(qual) {
@@ -83,6 +108,7 @@
     }));
     el.filtroUf.replaceChildren.apply(el.filtroUf, opcoes);
     el.filtroUf.value = estado.uf;
+    if (el.filtroUf.value !== estado.uf) estado.uf = ""; // UF da URL que não existe nos dados
   }
 
   function contarStatus() {
@@ -136,6 +162,7 @@
     el.lista.replaceChildren.apply(el.lista, lista.map(linhaLead));
     el.lista.hidden = lista.length === 0;
     el.vazio.hidden = lista.length !== 0;
+    gravarFiltrosNaUrl();
   }
 
   function limparFiltros() {
@@ -169,6 +196,9 @@
     el.btnTentar.addEventListener("click", carregar);
     el.btnLimpar.addEventListener("click", limparFiltros);
 
+    lerFiltrosDaUrl();
+    el.busca.value = estado.busca;
+    marcarChip(estado.status);
     carregar();
   });
 }());

@@ -28,6 +28,11 @@ a tela mostra o erro, com dica. Use um servidor local na raiz:
 e abra `http://localhost:8080/leads.html`. `index.html` funciona com duplo clique.
 Para ver o estado de erro: `leads.html?fonte=data/nao-existe.json` (só aceita `data/<nome>.json`).
 
+Os filtros da tela de leads ficam na URL e podem ser compartilhados: `leads.html?q=sao&status=Frio&uf=BA`.
+`q` = busca (até 100 caracteres), `status` = `Qualificado`|`Quente`|`Morno`|`Frio` (exato), `uf` = sigla.
+Valor desconhecido é ignorado e some da URL. A URL é atualizada com `replaceState` (não cria
+entrada no "voltar" a cada tecla).
+
 ## Convenções
 
 - Sem framework, sem build, sem dependência além do Google Fonts (Inter + JetBrains Mono).
